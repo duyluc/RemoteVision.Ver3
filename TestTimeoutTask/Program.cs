@@ -11,31 +11,43 @@ namespace TestTimeoutTask
     {
         static void Main(string[] args)
         {
-            Start().Wait();
-            Console.ReadKey();
-        }
-
-        public static async Task Start()
-        {
             Task _ = Count();
+            Console.ReadKey();
         }
 
         public static async Task Count()
         {
-            Task _ = new Task(() =>
+            try
             {
-                int count = 0;
-                while (count <5)
+                using (CancellationTokenSource cancelResource = new CancellationTokenSource())
                 {
-                    Console.WriteLine($"Count: {count}");
-                    count++;
-                    Thread.Sleep(1000);
+                    bool _iscomplete = false;
+                    Thread _ = new Thread(() =>
+                    {
+                        int count = 0;
+                        while (count < 5)
+                        {
+                            Console.WriteLine($"Count: {count}");
+                            count++;
+                            Thread.Sleep(1000);
+                        }
+                        _iscomplete = true;
+                    });
+                    _.IsBackground = true;
+                    _.Start();
+                    await Task.Delay(2500);
+                    if (!_iscomplete)
+                    {
+                        _.Abort();
+                        throw new TimeoutException();
+                    }
                 }
-            });
-            if(await Task.WhenAny(_,Task.Delay(3500)) == _){
-                Console.WriteLine("Complete!");
             }
-            else
+            catch(OperationCanceledException c)
+            {
+                
+            }
+            catch(TimeoutException t)
             {
                 Console.WriteLine("Timeout!");
             }

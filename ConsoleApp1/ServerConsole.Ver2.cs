@@ -44,7 +44,7 @@ namespace ConsoleApp1
         private void AcceptCallBack(IAsyncResult ar)
         {
             Socket _listener = ((Socket)ar.AsyncState);
-            Socket handler
+            //Socket handler
         }
     }
 
