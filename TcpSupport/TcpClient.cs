@@ -90,7 +90,7 @@ namespace TcpSupport
             int offset = 0;
             int senddatalength = _sendData.Length;
             byte[] byte_senddatalengt = BitConverter.GetBytes(senddatalength);
-            socket.Send(_sendData);
+            socket.Send(byte_senddatalengt);
             Thread.Sleep(10);
             while (true)
             {
@@ -100,12 +100,12 @@ namespace TcpSupport
             }
         }
 
-        public void Receive(Socket socket, byte[] _receiveData)
+        public byte[] Receive(Socket socket)
         {
             byte[] byte_receivedatalengt = new byte[4];
             socket.Receive(byte_receivedatalengt, 0, 4, SocketFlags.None);
             int receivedatalength = BitConverter.ToInt32(byte_receivedatalengt, 0);
-            _receiveData = new byte[receivedatalength];
+            byte[] _receiveData = new byte[receivedatalength];
             int offset = 0;
             while (true)
             {
@@ -113,6 +113,7 @@ namespace TcpSupport
                 offset += read;
                 if (offset == receivedatalength) break;
             }
+            return _receiveData;
         }
 
         public async Task Run(byte[] _senddata)
@@ -148,7 +149,7 @@ namespace TcpSupport
                 byte[] receivedata = null;
                 Thread _receive = new Thread(() =>
                 {
-                    this.Receive(this.Client, receivedata);
+                    receivedata = this.Receive(this.Client);
                     iscomplete = true;
                 });
                 _receive.IsBackground = true;

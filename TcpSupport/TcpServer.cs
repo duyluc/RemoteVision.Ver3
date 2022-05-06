@@ -245,7 +245,7 @@ namespace TcpSupport
                 int count4timeout = 0;
                 Thread _receive = new Thread(() => 
                 { 
-                    this.Receive(client, receivedata);
+                    receivedata = this.Receive(client);
                     iscomplete = true;
                 });
                 _receive.IsBackground = true;
@@ -329,7 +329,7 @@ namespace TcpSupport
             int offset = 0;
             int senddatalength = _sendData.Length;
             byte[] byte_senddatalengt = BitConverter.GetBytes(senddatalength);
-            client.Send(_sendData);
+            client.Send(byte_senddatalengt);
             Thread.Sleep(10);
             while (true)
             {
@@ -339,8 +339,9 @@ namespace TcpSupport
             }
         }
 
-        public void Receive(Socket client, byte[] _receiveData)
+        public byte[] Receive(Socket client)
         {
+            byte[] _receiveData;
             byte[] byte_receivedatalengt = new byte[4];
             client.Receive(byte_receivedatalengt, 0, 4, SocketFlags.None);
             int receivedatalength = BitConverter.ToInt32(byte_receivedatalengt, 0);
@@ -352,6 +353,7 @@ namespace TcpSupport
                 offset += read;
                 if (offset == receivedatalength) break;
             }
+            return _receiveData;
         }
 
         public byte[] Process(byte[] _data)
