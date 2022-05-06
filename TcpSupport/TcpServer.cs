@@ -36,18 +36,66 @@ namespace TcpSupport
         public IPEndPoint ServerEP { get; set; }
         public Mode AcceptClientMode { get; set; } = Mode.Free;
         public List<string> AccessableClients { get; set; }
-        public Dictionary<string,Socket> ConnectedClients { get; set; }
-        public Dictionary<string,Task> ClientServiceTasks { get; set; }
+        public Dictionary<string, Socket> ConnectedClients { get; set; }
+        public Dictionary<string, Task> ClientServiceTasks { get; set; }
         public CancellationTokenSource CancellationServerRunning { get; set; }
 
         public System.Timers.Timer CheckSubcribedClientsTimer;
 
         public int SendingTimeouttime = 1000;
         public int ReceivingTimeouttime = 1000;
+        public int ProcessTimeout = 2000;
 
+        // Event
+        public event EventHandler Listening;
+        public event EventHandler UnListening;
+        public event EventHandler Running;
+        public event EventHandler Stop;
+        public event EventHandler Received;
+        public event EventHandler Sended;
+        public event EventHandler Accepted;
+
+        public void OnListening()
+        {
+            this.ListenerStatus = Status.Listening;
+            Listening?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnUnListening()
+        {
+            this.ListenerStatus = Status.Stoped;
+            UnListening?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnRunning()
+        {
+            this.ServerStatus = Status.Running;
+            Running?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnStop()
+        {
+            this.ServerStatus = Status.Stoped;
+            Stop?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnReceived(byte[] _data)
+        {
+            Received?.Invoke(this, new TcpArgs(_data));
+        }
+
+        public void OnSended()
+        {
+            Sended?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnAccepted(Socket client)
+        {
+            Accepted?.Invoke(client, EventArgs.Empty);
+        }
+        //
         public TcpServer()
         {
-            this.Listen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             this.AccessableClients = new List<string>();
             this.ConnectedClients = new Dictionary<string, Socket>();
             this.ClientServiceTasks = new Dictionary<string, Task>();
@@ -79,14 +127,14 @@ namespace TcpSupport
         /// <summary>
         /// Goi lenh khoi dong server
         /// </summary>
-        public void Start(string _ip, int _port)
+        public async Task StartServer(string _ip, int _port)
         {
             try
             {
                 IPAddress address = IPAddress.Parse(_ip);
                 ServerEP = new IPEndPoint(address, _port);
-
-                Thread _bindingthread = new Thread(() =>
+                this.Listen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                Task _bindingthread = new Task(() =>
                 {
                     for(int i = 0;i < 3; i++)
                     {
@@ -95,20 +143,23 @@ namespace TcpSupport
                             if (ServerEP == null) throw new Exception("Server IPEndpoint is Null!");
                             this.Listen.Bind(ServerEP);
                             this.Listen.Listen(100);
+                            this.OnListening();
                             break;
                         }
                         catch
                         {
                             if(i == 2)
                             {
-                                throw new Exception("Can not initial Server");
+                                this.OnUnListening();
                             }
                         }
                     }
                 });
                 _bindingthread.Start();
-                _bindingthread.Join();
+                await _bindingthread;
+                if (this.ListenerStatus == Status.Stoped) throw new Exception("Can not Binding Server!");
                 this.CancellationServerRunning = new CancellationTokenSource();
+                Task _ = this.Run(CancellationServerRunning);
                 //-->Reservation
                 //if (!this.Listen.IsBound)
                 //{
@@ -122,47 +173,47 @@ namespace TcpSupport
             }
         }
 
-        public void Stop()
+        public void StopServer()
         {
             this.CancellationServerRunning.Cancel();
         }
 
         public async Task Run(CancellationTokenSource cancelSource)
         {
-            ServerStatus = Status.Running;
+            this.OnRunning();
             CancellationToken cancelToken = cancelSource.Token;
             try
             {
-                Task _task = new Task(() =>
+                Task _t = new Task(() =>
                 {
-                    //Command to Cancel Task
-                    Thread _subtask = new Thread(() =>
-                    {
-                        for (; ; )
-                        {
-                            if (cancelToken.IsCancellationRequested)
-                            {
-                                cancelToken.ThrowIfCancellationRequested();
-                            }
-                        }
-                    });
-                    _subtask.Start();
-                    _subtask.IsBackground = true;
-                    //Do something
-                    for (; ; )
+                    while(true)
                     {
                         // Waiting for connecting clients
-                        Socket connectclient = this.Listen.Accept();
-                        if(AcceptClientMode == Mode.BaseClientList)
+                        try
                         {
-                            if (!this.AccessableClients.Contains(((IPEndPoint)connectclient.RemoteEndPoint).Address.ToString())) return;
+                            Socket connectclient = this.Listen.Accept();
+                            if (AcceptClientMode == Mode.BaseClientList)
+                            {
+                                if (!this.AccessableClients.Contains(((IPEndPoint)connectclient.RemoteEndPoint).Address.ToString())) return;
+                            }
+                            this.ConnectedClients.Add(((IPEndPoint)connectclient.RemoteEndPoint).Address.ToString(), connectclient);
+                            Task _ = this.ClientServiceTask(connectclient);
+                            this.OnAccepted(connectclient);
                         }
-                        this.ConnectedClients.Add(((IPEndPoint)connectclient.RemoteEndPoint).Address.ToString(), connectclient);
-                        Task _ = this.ClientServiceTask(connectclient);
+                        catch { }
+                        
                     }
                 });
-                _task.Start();
-                await _task;
+                _t.Start();
+                //Command to Cancel Taskwhile(true)
+                while(true)
+                {
+                    if (cancelToken.IsCancellationRequested)
+                    {
+                        cancelToken.ThrowIfCancellationRequested();
+                    }
+                    await Task.Delay(5);
+                }
             }
             catch(OperationCanceledException c)
             {
@@ -178,6 +229,8 @@ namespace TcpSupport
             finally
             {
                 this.Listen.Close();
+                this.OnStop();
+                this.OnUnListening();
             }
         }
 
@@ -207,13 +260,35 @@ namespace TcpSupport
                     _receive.Abort();
                     throw new TimeoutException();
                 }
-
+                //-->Process
+                if (receivedata == null) return;
+                if (receivedata.Length == 0) return;
+                iscomplete = false;
+                count4timeout = 0;
+                byte[] processeddata = null;
+                Thread _process = new Thread(() =>
+                {
+                    processeddata = Process(receivedata);
+                    iscomplete = true;
+                });
+                _process.IsBackground = true;
+                _process.Start();
+                while (count4timeout < (ProcessTimeout / 10) && !iscomplete)
+                {
+                    await Task.Delay(10);
+                    count4timeout++;
+                }
+                if (!iscomplete)
+                {
+                    _process.Abort();
+                    throw new TimeoutException();
+                }
                 //-->Send
                 iscomplete = false;
                 count4timeout = 0;
                 Thread _send = new Thread(() =>
                 {
-                    this.Send(client, receivedata);
+                    this.Send(client, processeddata);
                     iscomplete = true;
                 });
                 _send.IsBackground = true;
@@ -238,10 +313,19 @@ namespace TcpSupport
             {
                 Log.WriteLog(t);
             }
+            finally
+            {
+                if(this.ConnectedClients.ContainsKey(((IPEndPoint)client.RemoteEndPoint).Address.ToString()))
+                    this.ConnectedClients.Remove(((IPEndPoint)client.RemoteEndPoint).Address.ToString());
+            }
         }
 
         public void Send(Socket client,byte[] _sendData)
         {
+            if(_sendData == null)
+            {
+                return;
+            }
             int offset = 0;
             int senddatalength = _sendData.Length;
             byte[] byte_senddatalengt = BitConverter.GetBytes(senddatalength);
@@ -268,6 +352,12 @@ namespace TcpSupport
                 offset += read;
                 if (offset == receivedatalength) break;
             }
+        }
+
+        public byte[] Process(byte[] _data)
+        {
+            //Process 
+            return _data;
         }
     }
 }

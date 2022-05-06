@@ -24,7 +24,7 @@ namespace ClientConsole.Ver1
     public class AsynchronousClient
     {
         // The port number for the remote device.  
-        private const int port = 11000;
+        private const int port = 9999;
 
         // ManualResetEvent instances signal completion.  
         private static ManualResetEvent connectDone =
@@ -45,8 +45,7 @@ namespace ClientConsole.Ver1
                 // Establish the remote endpoint for the socket.  
                 // The name of the
                 // remote device is "host.contoso.com".  
-                IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-                IPAddress ipAddress = ipHostInfo.AddressList[0];
+                IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
                 IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
 
                 // Create a TCP/IP socket.  

@@ -16,6 +16,10 @@ namespace Ultilities
         public static string WriteLog(Exception _t)
         {
             string message = "";
+            if (!Directory.Exists(LogFilePath))
+            {
+                Directory.CreateDirectory(LogFilePath);
+            }
             using (StreamWriter file = new StreamWriter(Path.Combine(LogFilePath, DateTime.Now.ToString("dd-MM-yyy") + ".txt")))
             {
                 message = DateTime.Now.ToString("--> HH:mm:ss -->") + _t.Source.ToString() + $"<-- {_t.Message}";
@@ -26,6 +30,10 @@ namespace Ultilities
 
         public static void WriteLog(string _t)
         {
+            if (!Directory.Exists(LogFilePath))
+            {
+                Directory.CreateDirectory(LogFilePath);
+            }
             using (StreamWriter file = new StreamWriter(Path.Combine(LogFilePath, DateTime.Now.ToString("dd-MM-yyy") + ".txt")))
             {
                 file.WriteLine(_t);

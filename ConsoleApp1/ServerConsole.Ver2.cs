@@ -17,7 +17,6 @@ namespace ConsoleApp1
         public byte[] ReceiveData { get; set; } = null;
     }
 
-    
     public class TcpServer
     {
         public ManualResetEvent allDone = new ManualResetEvent(false);
