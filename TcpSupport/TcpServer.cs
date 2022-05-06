@@ -44,7 +44,7 @@ namespace TcpSupport
 
         public int SendingTimeouttime = 1000;
         public int ReceivingTimeouttime = 1000;
-        public int ProcessTimeout = 2000;
+        public int ProcessTimeouttime = 2000;
 
         // Event
         public event EventHandler Listening;
@@ -54,6 +54,9 @@ namespace TcpSupport
         public event EventHandler Received;
         public event EventHandler Sended;
         public event EventHandler Accepted;
+        public event EventHandler SendTimeout;
+        public event EventHandler ReceivedTimeout;
+        public event EventHandler ProcessTimeout;
 
         public void OnListening()
         {
@@ -92,6 +95,21 @@ namespace TcpSupport
         public void OnAccepted(Socket client)
         {
             Accepted?.Invoke(client, EventArgs.Empty);
+        }
+
+        public void OnSendTimeout()
+        {
+            SendTimeout?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnReceiveTimeout()
+        {
+            ReceivedTimeout?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnProceesTimeout()
+        {
+            ProcessTimeout?.Invoke(this, EventArgs.Empty);
         }
         //
         public TcpServer()
@@ -273,7 +291,7 @@ namespace TcpSupport
                 });
                 _process.IsBackground = true;
                 _process.Start();
-                while (count4timeout < (ProcessTimeout / 10) && !iscomplete)
+                while (count4timeout < (ProcessTimeouttime / 10) && !iscomplete)
                 {
                     await Task.Delay(10);
                     count4timeout++;

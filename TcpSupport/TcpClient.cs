@@ -25,10 +25,14 @@ namespace TcpSupport
         public event EventHandler Disconnected;
         public event EventHandler Sended;
         public event EventHandler Received;
+        public event EventHandler Processed;
+        public event EventHandler SendTimeout;
+        public event EventHandler ReceivedTimeout;
+        public event EventHandler ProcessTimeout;
 
         public int SendingTimeouttime = 1000;
         public int ReceivingTimeouttime = 1000;
-        public int ProcessTimeout = 2000;
+        public int ProcessTimeouttime = 2000;
 
         public void OnConnected()
         {
@@ -48,6 +52,26 @@ namespace TcpSupport
         public void OnReceived(byte[] _receivedData)
         {
             Received?.Invoke(this, new TcpArgs(_receivedData));
+        }
+
+        public void OnProcessed()
+        {
+            Processed?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnSendTimeout()
+        {
+            SendTimeout?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnReceiveTimeout()
+        {
+            ReceivedTimeout?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void OnProceesTimeout()
+        {
+            ProcessTimeout?.Invoke(this, EventArgs.Empty);
         }
 
         public Socket Client { get; set; }
@@ -139,6 +163,8 @@ namespace TcpSupport
                 if (!iscomplete)
                 {
                     _send.Abort();
+                    //Call Send Timeout Event
+                    OnSendTimeout();
                     throw new TimeoutException();
                 }
                 this.OnSended();
@@ -162,13 +188,15 @@ namespace TcpSupport
                 if (!iscomplete)
                 {
                     _receive.Abort();
+                    //Call Receive Timeout Event
+                    OnReceiveTimeout();
                     throw new TimeoutException();
                 }
                 this.OnReceived(receivedata);
             }
             catch (TimeoutException timeout)
             {
-                // Do something when happenning timeout Exception
+
             }
             catch (Exception t)
             {

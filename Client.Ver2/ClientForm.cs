@@ -23,7 +23,18 @@ namespace Client.Ver2
             this.TcpClient.Disconnected += TcpClient_Disconnected;
             this.TcpClient.Sended += TcpClient_Sended;
             this.TcpClient.Received += TcpClient_Received;
+            this.TcpClient.SendTimeout += TcpClient_SendTimeout;
+            this.TcpClient.ReceivedTimeout += TcpClient_ReceivedTimeout;
+        }
 
+        private void TcpClient_ReceivedTimeout(object sender, EventArgs e)
+        {
+            ShowMessage("Receive Timeout!");
+        }
+
+        private void TcpClient_SendTimeout(object sender, EventArgs e)
+        {
+            ShowMessage("Send Timeout!");
         }
 
         private void TcpClient_Received(object sender, EventArgs e)
@@ -53,11 +64,14 @@ namespace Client.Ver2
         private void btnSend_Click(object sender, EventArgs e)
         {
             Bitmap image;
+            Bitmap simage;
             using (Bitmap _image = new Bitmap(@"C:\Users\duong\Desktop\Image.jpg"))
             {
                 image = new Bitmap(_image);
-            }            
+                simage = new Bitmap(_image);
+            }
             Task _ = Transfer(image);
+            this.Display1.Invoke(new Action(() => { this.Display1.BackgroundImage = simage; }));
         }
         
         public async Task Transfer(object subject)

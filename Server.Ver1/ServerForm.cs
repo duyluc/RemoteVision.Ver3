@@ -27,6 +27,24 @@ namespace Server.Ver1
             this.Server.Running += Server_Running;
             this.Server.Stop += Server_Stop;
             this.Server.Accepted += Server_Accepted;
+            this.Server.SendTimeout += Server_SendTimeout;
+            this.Server.ReceivedTimeout += Server_ReceivedTimeout;
+            this.Server.ProcessTimeout += Server_ProcessTimeout;
+        }
+
+        private void Server_ProcessTimeout(object sender, EventArgs e)
+        {
+            ShowMessage("Processing Timeout!");
+        }
+
+        private void Server_ReceivedTimeout(object sender, EventArgs e)
+        {
+            ShowMessage("Receiving Timeout!");
+        }
+
+        private void Server_SendTimeout(object sender, EventArgs e)
+        {
+            ShowMessage("Sending Timeout!");
         }
 
         private void Server_Accepted(object sender, EventArgs e)
