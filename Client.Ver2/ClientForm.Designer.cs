@@ -39,18 +39,19 @@ namespace Client.Ver2
             this.label1 = new System.Windows.Forms.Label();
             this.tbxMessage = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.Display1 = new System.Windows.Forms.PictureBox();
-            this.Display2 = new System.Windows.Forms.PictureBox();
-            this.Display3 = new System.Windows.Forms.PictureBox();
             this.Display4 = new System.Windows.Forms.PictureBox();
+            this.Display3 = new System.Windows.Forms.PictureBox();
+            this.Display2 = new System.Windows.Forms.PictureBox();
+            this.Display1 = new System.Windows.Forms.PictureBox();
+            this.btnSelectImage = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.Display1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Display2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Display3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Display4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Display3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Display2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Display1)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -86,6 +87,7 @@ namespace Client.Ver2
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnSelectImage);
             this.panel1.Controls.Add(this.btnSend);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.tbxPort);
@@ -171,26 +173,15 @@ namespace Client.Ver2
             this.tableLayoutPanel3.Size = new System.Drawing.Size(723, 638);
             this.tableLayoutPanel3.TabIndex = 1;
             // 
-            // Display1
+            // Display4
             // 
-            this.Display1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.Display1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.Display1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Display1.Location = new System.Drawing.Point(3, 3);
-            this.Display1.Name = "Display1";
-            this.Display1.Size = new System.Drawing.Size(355, 313);
-            this.Display1.TabIndex = 0;
-            this.Display1.TabStop = false;
-            // 
-            // Display2
-            // 
-            this.Display2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.Display2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Display2.Location = new System.Drawing.Point(364, 3);
-            this.Display2.Name = "Display2";
-            this.Display2.Size = new System.Drawing.Size(356, 313);
-            this.Display2.TabIndex = 1;
-            this.Display2.TabStop = false;
+            this.Display4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.Display4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Display4.Location = new System.Drawing.Point(364, 322);
+            this.Display4.Name = "Display4";
+            this.Display4.Size = new System.Drawing.Size(356, 313);
+            this.Display4.TabIndex = 3;
+            this.Display4.TabStop = false;
             // 
             // Display3
             // 
@@ -202,15 +193,36 @@ namespace Client.Ver2
             this.Display3.TabIndex = 2;
             this.Display3.TabStop = false;
             // 
-            // Display4
+            // Display2
             // 
-            this.Display4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.Display4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Display4.Location = new System.Drawing.Point(364, 322);
-            this.Display4.Name = "Display4";
-            this.Display4.Size = new System.Drawing.Size(356, 313);
-            this.Display4.TabIndex = 3;
-            this.Display4.TabStop = false;
+            this.Display2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.Display2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Display2.Location = new System.Drawing.Point(364, 3);
+            this.Display2.Name = "Display2";
+            this.Display2.Size = new System.Drawing.Size(356, 313);
+            this.Display2.TabIndex = 1;
+            this.Display2.TabStop = false;
+            // 
+            // Display1
+            // 
+            this.Display1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.Display1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.Display1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Display1.Location = new System.Drawing.Point(3, 3);
+            this.Display1.Name = "Display1";
+            this.Display1.Size = new System.Drawing.Size(355, 313);
+            this.Display1.TabIndex = 0;
+            this.Display1.TabStop = false;
+            // 
+            // btnSelectImage
+            // 
+            this.btnSelectImage.Location = new System.Drawing.Point(132, 36);
+            this.btnSelectImage.Name = "btnSelectImage";
+            this.btnSelectImage.Size = new System.Drawing.Size(59, 23);
+            this.btnSelectImage.TabIndex = 5;
+            this.btnSelectImage.Text = "Search";
+            this.btnSelectImage.UseVisualStyleBackColor = true;
+            this.btnSelectImage.Click += new System.EventHandler(this.btnSelectImage_Click);
             // 
             // ClientForm
             // 
@@ -219,17 +231,17 @@ namespace Client.Ver2
             this.ClientSize = new System.Drawing.Size(1001, 644);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ClientForm";
-            this.Text = "Form1";
+            this.Text = "CLIENT";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.Display1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Display2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.Display3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Display4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Display3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Display2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Display1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -250,6 +262,7 @@ namespace Client.Ver2
         private System.Windows.Forms.PictureBox Display3;
         private System.Windows.Forms.PictureBox Display2;
         private System.Windows.Forms.PictureBox Display1;
+        private System.Windows.Forms.Button btnSelectImage;
     }
 }
 

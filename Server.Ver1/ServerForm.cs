@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cognex.VisionPro.ToolBlock;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,16 +13,34 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TcpSupport;
 using Ultilities;
+using VisionSupport;
+using CognexVisionSupport;
 
 namespace Server.Ver1
 {
     public partial class ServerForm : Form
     {
         public TcpServer Server { get; set; }
+        public Dictionary<string, Terminal> Input { get; set; }
+        public Dictionary<string, Terminal> Output { get; set; }
+        public static CogToolBlock CogToolBlock { get; set; }
+        FrmStartup startuppage;
+
         public ServerForm()
         {
+            
             InitializeComponent();
+            
+        }
+
+        private void ServerForm_Load(object sender, EventArgs e)
+        {
+            startuppage = new FrmStartup();
+            startuppage.Show();
+            this.Hide();
             this.Server = new TcpServer();
+            Input = new Dictionary<string, Terminal>();
+            Output = new Dictionary<string, Terminal>();
             this.Server.Listening += Server_Listening;
             this.Server.UnListening += Server_UnListening;
             this.Server.Running += Server_Running;
@@ -30,6 +49,26 @@ namespace Server.Ver1
             this.Server.SendTimeout += Server_SendTimeout;
             this.Server.ReceivedTimeout += Server_ReceivedTimeout;
             this.Server.ProcessTimeout += Server_ProcessTimeout;
+            this.Server.Received += Server_Received;
+            CogToolBlock = CognexVisionSupport.Serialize.LoadToolBlock(@"C:\Users\duong\Desktop\Test_RemoteServer\ToolBlock\tool.vpp") as CogToolBlock;
+            this.Show();
+            startuppage.Close();
+        }
+
+        private void Server_Received(object sender, EventArgs e)
+        {
+            Thread _ = new Thread(() =>
+            {
+                byte[] receivedData = ((TcpArgs)e).Data;
+                Input = TcpSupport.Serialize.ByteArrayToTerminal(receivedData);
+                Terminal ImageTerminal = Input["Image"] as Terminal;
+                Bitmap inputimage = ImageTerminal.Value as Bitmap;
+                this.Display1.Invoke(new Action(() =>
+                {
+                    this.Display1.BackgroundImage = inputimage;
+                }));
+            });
+            _.Start();
         }
 
         private void Server_ProcessTimeout(object sender, EventArgs e)
@@ -119,5 +158,18 @@ namespace Server.Ver1
                 Log.WriteLog(t.Message);
             }
         }
+
+        private void btnToolBlock_Click(object sender, EventArgs e)
+        {
+            ToolForm toolform = new ToolForm();
+            toolform.Show();
+        }
+
+        private void ServerForm_Shown(object sender, EventArgs e)
+        {
+            
+        }
+
+        
     }
 }

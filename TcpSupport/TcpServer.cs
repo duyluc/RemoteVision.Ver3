@@ -278,6 +278,8 @@ namespace TcpSupport
                     _receive.Abort();
                     throw new TimeoutException();
                 }
+                //-->Received Event
+                OnReceived(receivedata);
                 //-->Process
                 if (receivedata == null) return;
                 if (receivedata.Length == 0) return;
@@ -376,7 +378,6 @@ namespace TcpSupport
 
         public byte[] Process(byte[] _data)
         {
-            //Process 
             return _data;
         }
     }

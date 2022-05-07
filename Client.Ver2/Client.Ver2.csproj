@@ -84,6 +84,10 @@
       <Project>{c41b7b68-7489-4e04-a4bc-f6e77649c205}</Project>
       <Name>TcpSupport</Name>
     </ProjectReference>
+    <ProjectReference Include="..\VisionSupport\VisionSupport.csproj">
+      <Project>{508417f6-3279-42fa-a218-3ba1b4af7cc2}</Project>
+      <Name>VisionSupport</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

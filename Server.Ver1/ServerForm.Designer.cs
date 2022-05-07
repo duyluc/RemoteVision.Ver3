@@ -32,6 +32,7 @@ namespace Server.Ver1
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnToolBlock = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -39,9 +40,19 @@ namespace Server.Ver1
             this.tbIp = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tbxMessage = new System.Windows.Forms.TextBox();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.Display4 = new System.Windows.Forms.PictureBox();
+            this.Display3 = new System.Windows.Forms.PictureBox();
+            this.Display2 = new System.Windows.Forms.PictureBox();
+            this.Display1 = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.Display4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Display3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Display2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Display1)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -50,6 +61,7 @@ namespace Server.Ver1
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 22.56881F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 77.43119F));
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel3, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -76,6 +88,7 @@ namespace Server.Ver1
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnToolBlock);
             this.panel1.Controls.Add(this.btnStop);
             this.panel1.Controls.Add(this.btnStart);
             this.panel1.Controls.Add(this.label2);
@@ -87,6 +100,16 @@ namespace Server.Ver1
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(234, 71);
             this.panel1.TabIndex = 0;
+            // 
+            // btnToolBlock
+            // 
+            this.btnToolBlock.Location = new System.Drawing.Point(33, 41);
+            this.btnToolBlock.Name = "btnToolBlock";
+            this.btnToolBlock.Size = new System.Drawing.Size(59, 23);
+            this.btnToolBlock.TabIndex = 6;
+            this.btnToolBlock.Text = "Tool";
+            this.btnToolBlock.UseVisualStyleBackColor = true;
+            this.btnToolBlock.Click += new System.EventHandler(this.btnToolBlock_Click);
             // 
             // btnStop
             // 
@@ -155,6 +178,68 @@ namespace Server.Ver1
             this.tbxMessage.Size = new System.Drawing.Size(234, 320);
             this.tbxMessage.TabIndex = 1;
             // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.ColumnCount = 2;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.Controls.Add(this.Display4, 1, 1);
+            this.tableLayoutPanel3.Controls.Add(this.Display3, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.Display2, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.Display1, 0, 0);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(249, 3);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 2;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(838, 642);
+            this.tableLayoutPanel3.TabIndex = 1;
+            // 
+            // Display4
+            // 
+            this.Display4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.Display4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.Display4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Display4.Location = new System.Drawing.Point(422, 324);
+            this.Display4.Name = "Display4";
+            this.Display4.Size = new System.Drawing.Size(413, 315);
+            this.Display4.TabIndex = 3;
+            this.Display4.TabStop = false;
+            // 
+            // Display3
+            // 
+            this.Display3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.Display3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.Display3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Display3.Location = new System.Drawing.Point(3, 324);
+            this.Display3.Name = "Display3";
+            this.Display3.Size = new System.Drawing.Size(413, 315);
+            this.Display3.TabIndex = 2;
+            this.Display3.TabStop = false;
+            // 
+            // Display2
+            // 
+            this.Display2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.Display2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.Display2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Display2.Location = new System.Drawing.Point(422, 3);
+            this.Display2.Name = "Display2";
+            this.Display2.Size = new System.Drawing.Size(413, 315);
+            this.Display2.TabIndex = 1;
+            this.Display2.TabStop = false;
+            // 
+            // Display1
+            // 
+            this.Display1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.Display1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.Display1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Display1.Location = new System.Drawing.Point(3, 3);
+            this.Display1.Name = "Display1";
+            this.Display1.Size = new System.Drawing.Size(413, 315);
+            this.Display1.TabIndex = 0;
+            this.Display1.TabStop = false;
+            // 
             // ServerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -162,12 +247,19 @@ namespace Server.Ver1
             this.ClientSize = new System.Drawing.Size(1090, 648);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ServerForm";
-            this.Text = "Form1";
+            this.Text = "SERVER";
+            this.Load += new System.EventHandler(this.ServerForm_Load);
+            this.Shown += new System.EventHandler(this.ServerForm_Shown);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.tableLayoutPanel3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.Display4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Display3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Display2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Display1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -184,6 +276,12 @@ namespace Server.Ver1
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.TextBox tbxMessage;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.PictureBox Display4;
+        private System.Windows.Forms.PictureBox Display3;
+        private System.Windows.Forms.PictureBox Display2;
+        private System.Windows.Forms.PictureBox Display1;
+        private System.Windows.Forms.Button btnToolBlock;
     }
 }
 
