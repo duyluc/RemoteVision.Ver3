@@ -195,7 +195,6 @@ namespace TcpSupport
         {
             this.CancellationServerRunning.Cancel();
         }
-
         public async Task Run(CancellationTokenSource cancelSource)
         {
             this.OnRunning();
@@ -210,16 +209,9 @@ namespace TcpSupport
                         try
                         {
                             Socket connectclient = this.Listen.Accept();
-                            if (AcceptClientMode == Mode.BaseClientList)
-                            {
-                                if (!this.AccessableClients.Contains(((IPEndPoint)connectclient.RemoteEndPoint).Address.ToString())) return;
-                            }
-                            this.ConnectedClients.Add(((IPEndPoint)connectclient.RemoteEndPoint).Address.ToString(), connectclient);
-                            Task _ = this.ClientServiceTask(connectclient);
                             this.OnAccepted(connectclient);
                         }
-                        catch { }
-                        
+                        catch {}
                     }
                 });
                 _t.Start();
@@ -252,95 +244,7 @@ namespace TcpSupport
             }
         }
 
-        public async Task ClientServiceTask(Socket client)
-        {
-            try
-            {
-                //--Receive
-                //-->temp "receivedata"
-                byte[] receivedata = null;
-                bool iscomplete = false;
-                int count4timeout = 0;
-                Thread _receive = new Thread(() => 
-                { 
-                    receivedata = this.Receive(client);
-                    iscomplete = true;
-                });
-                _receive.IsBackground = true;
-                _receive.Start();
-                while (count4timeout < (ReceivingTimeouttime / 10) && !iscomplete)
-                {
-                    await Task.Delay(10);
-                    count4timeout++;
-                }
-                if (!iscomplete)
-                {
-                    _receive.Abort();
-                    throw new TimeoutException();
-                }
-                //-->Received Event
-                OnReceived(receivedata);
-                //-->Process
-                if (receivedata == null) return;
-                if (receivedata.Length == 0) return;
-                iscomplete = false;
-                count4timeout = 0;
-                byte[] processeddata = null;
-                Thread _process = new Thread(() =>
-                {
-                    processeddata = Process(receivedata);
-                    iscomplete = true;
-                });
-                _process.IsBackground = true;
-                _process.Start();
-                while (count4timeout < (ProcessTimeouttime / 10) && !iscomplete)
-                {
-                    await Task.Delay(10);
-                    count4timeout++;
-                }
-                if (!iscomplete)
-                {
-                    _process.Abort();
-                    throw new TimeoutException();
-                }
-                //-->Send
-                iscomplete = false;
-                count4timeout = 0;
-                Thread _send = new Thread(() =>
-                {
-                    this.Send(client, processeddata);
-                    iscomplete = true;
-                });
-                _send.IsBackground = true;
-                _send.Start();
-                while (count4timeout < (ReceivingTimeouttime / 10) && !iscomplete)
-                {
-                    await Task.Delay(10);
-                    count4timeout++;
-                }
-                if (!iscomplete)
-                {
-                    _send.Abort();
-                    throw new TimeoutException();
-                }
-
-            }
-            catch(TimeoutException timeout)
-            {
-                // Do something when happenning timeout Exception
-            }
-            catch (Exception t)
-            {
-                Log.WriteLog(t);
-            }
-            finally
-            {
-                if(this.ConnectedClients.ContainsKey(((IPEndPoint)client.RemoteEndPoint).Address.ToString()))
-                    this.ConnectedClients.Remove(((IPEndPoint)client.RemoteEndPoint).Address.ToString());
-            }
-        }
-
-        public void Send(Socket client,byte[] _sendData)
+        private void _send(Socket client,byte[] _sendData)
         {
             if(_sendData == null)
             {
@@ -359,7 +263,7 @@ namespace TcpSupport
             }
         }
 
-        public byte[] Receive(Socket client)
+        private byte[] _receive(Socket client)
         {
             byte[] _receiveData;
             byte[] byte_receivedatalengt = new byte[4];
@@ -374,6 +278,72 @@ namespace TcpSupport
                 if (offset == receivedatalength) break;
             }
             return _receiveData;
+        }
+
+        public bool Send(Socket _client, byte[] _sendData)
+        {
+            bool iscomplete = false;
+            try
+            {
+                int count4timeout = 0;
+                iscomplete = false;
+                count4timeout = 0;
+                Thread _send = new Thread(() =>
+                {
+                    this._send(_client, _sendData);
+                    iscomplete = true;
+                });
+                _send.IsBackground = true;
+                _send.Start();
+                while (count4timeout < (ReceivingTimeouttime / 10) && !iscomplete)
+                {
+                    Task.Delay(10);
+                    count4timeout++;
+                }
+                if (!iscomplete)
+                {
+                    _send.Abort();
+                }
+            }
+            catch(Exception t)
+            {
+                throw t;
+            }
+            return iscomplete;
+        }
+
+        public byte[] Receive(Socket _client, out bool _iscomplete)
+        {
+            bool iscomplete = false;
+            byte[] receivedata = null;
+            try
+            {
+                //--Receive
+                //-->temp "receivedata"
+                int count4timeout = 0;
+                Thread _receive = new Thread(() =>
+                {
+                    receivedata = this._receive(_client);
+                    iscomplete = true;
+                });
+                _receive.IsBackground = true;
+                _receive.Start();
+                while (count4timeout < (ReceivingTimeouttime / 10) && !iscomplete)
+                {
+                    Thread.Sleep(10);
+                    count4timeout++;
+                }
+                if (!iscomplete)
+                {
+                    _receive.Abort();
+                }
+            }
+            catch (Exception t)
+            {
+                throw t;
+            }
+            _iscomplete = iscomplete;
+            return receivedata;
         }
 
         public byte[] Process(byte[] _data)

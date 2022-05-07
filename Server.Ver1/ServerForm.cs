@@ -15,6 +15,7 @@ using TcpSupport;
 using Ultilities;
 using VisionSupport;
 using CognexVisionSupport;
+using Cognex.VisionPro;
 
 namespace Server.Ver1
 {
@@ -53,73 +54,6 @@ namespace Server.Ver1
             CogToolBlock = CognexVisionSupport.Serialize.LoadToolBlock(@"C:\Users\duong\Desktop\Test_RemoteServer\ToolBlock\tool.vpp") as CogToolBlock;
             this.Show();
             startuppage.Close();
-        }
-
-        private void Server_Received(object sender, EventArgs e)
-        {
-            Thread _ = new Thread(() =>
-            {
-                byte[] receivedData = ((TcpArgs)e).Data;
-                Input = TcpSupport.Serialize.ByteArrayToTerminal(receivedData);
-                Terminal ImageTerminal = Input["Image"] as Terminal;
-                Bitmap inputimage = ImageTerminal.Value as Bitmap;
-                this.Display1.Invoke(new Action(() =>
-                {
-                    this.Display1.BackgroundImage = inputimage;
-                }));
-            });
-            _.Start();
-        }
-
-        private void Server_ProcessTimeout(object sender, EventArgs e)
-        {
-            ShowMessage("Processing Timeout!");
-        }
-
-        private void Server_ReceivedTimeout(object sender, EventArgs e)
-        {
-            ShowMessage("Receiving Timeout!");
-        }
-
-        private void Server_SendTimeout(object sender, EventArgs e)
-        {
-            ShowMessage("Sending Timeout!");
-        }
-
-        private void Server_Accepted(object sender, EventArgs e)
-        {
-            Socket connectClinet = sender as Socket;
-            if (connectClinet == null) return;
-            string ip = ((IPEndPoint)connectClinet.RemoteEndPoint).Address.ToString();
-            int port = ((IPEndPoint)connectClinet.RemoteEndPoint).Port;
-            ShowMessage($"Accpeted Connect From: {ip}:{port}");
-        }
-
-        private void Server_Stop(object sender, EventArgs e)
-        {
-            this.btnStart.Invoke(new Action(() => { this.btnStart.Enabled = true; }));
-            this.btnStop.Invoke(new Action(() => { this.btnStop.Enabled = false; }));
-            this.ShowMessage("Server was Stoped!");
-        }
-
-        private void Server_Running(object sender, EventArgs e)
-        {
-            this.ShowMessage("Server is Running...");
-        }
-
-        private void Server_UnListening(object sender, EventArgs e)
-        {
-            this.ShowMessage("Server is DisListening!");
-        }
-
-        private void Server_Listening(object sender, EventArgs e)
-        {
-            this.btnStart.Invoke(new Action(() => 
-            { 
-                this.btnStart.Enabled = false; 
-            }));
-            this.btnStop.Invoke(new Action(() => { this.btnStop.Enabled = true; }));
-            this.ShowMessage("Server Listening...");
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -169,7 +103,169 @@ namespace Server.Ver1
         {
             
         }
+        #region TCP
+        //-->TCP Event Method
+        private void Server_Received(object sender, EventArgs e)
+        {
+            Thread _ = new Thread(() =>
+            {
+                byte[] receivedData = ((TcpArgs)e).Data;
+                Input = TcpSupport.Serialize.ByteArrayToTerminal(receivedData);
+                Terminal ImageTerminal = Input["Image"] as Terminal;
+                Bitmap inputimage = ImageTerminal.Value as Bitmap;
+                this.Display1.Invoke(new Action(() =>
+                {
+                    this.Display1.BackgroundImage = inputimage;
+                }));
+            });
+            _.Start();
+        }
 
-        
+        private void Server_ProcessTimeout(object sender, EventArgs e)
+        {
+            ShowMessage("Processing Timeout!");
+        }
+
+        private void Server_ReceivedTimeout(object sender, EventArgs e)
+        {
+            ShowMessage("Receiving Timeout!");
+        }
+
+        private void Server_SendTimeout(object sender, EventArgs e)
+        {
+            ShowMessage("Sending Timeout!");
+        }
+
+        private void Server_Accepted(object sender, EventArgs e)
+        {
+            Socket connectClinet = sender as Socket;
+            if (connectClinet == null) return;
+            string ip = ((IPEndPoint)connectClinet.RemoteEndPoint).Address.ToString();
+            int port = ((IPEndPoint)connectClinet.RemoteEndPoint).Port;
+            ShowMessage($"Accpeted Connect From: {ip}:{port}");
+
+            try
+            {
+                if (this.Server.AcceptClientMode == TcpServer.Mode.BaseClientList)
+                {
+                    if (!this.Server.AccessableClients.Contains(((IPEndPoint)connectClinet.RemoteEndPoint).Address.ToString())) return;
+                }
+                this.Server.ConnectedClients.Add(((IPEndPoint)connectClinet.RemoteEndPoint).Address.ToString(), connectClinet);
+                Task _ = this.ClientServiceTask(connectClinet);
+            }
+            catch(Exception t) 
+            {
+                ShowMessage(t.Message);
+            }
+        }
+
+        private void Server_Stop(object sender, EventArgs e)
+        {
+            this.btnStart.Invoke(new Action(() => { this.btnStart.Enabled = true; }));
+            this.btnStop.Invoke(new Action(() => { this.btnStop.Enabled = false; }));
+            this.ShowMessage("Server was Stoped!");
+        }
+
+        private void Server_Running(object sender, EventArgs e)
+        {
+            this.ShowMessage("Server is Running...");
+        }
+
+        private void Server_UnListening(object sender, EventArgs e)
+        {
+            this.ShowMessage("Server is DisListening!");
+        }
+
+        private void Server_Listening(object sender, EventArgs e)
+        {
+            this.btnStart.Invoke(new Action(() =>
+            {
+                this.btnStart.Enabled = false;
+            }));
+            this.btnStop.Invoke(new Action(() => { this.btnStop.Enabled = true; }));
+            this.ShowMessage("Server Listening...");
+        }
+
+        public async Task ClientServiceTask(Socket client)
+        {
+            Exception s = null;
+            try
+            {
+                Task _task = new Task(() =>
+                {
+                    //->receive
+                    bool iscomplete = false;
+                    byte[] receiveData = null;
+                    byte[] senddata = null;
+                    receiveData = this.Server.Receive(client, out iscomplete);
+                    if (!iscomplete) throw new TimeoutException();
+                    //->processing
+                    senddata = Processing(receiveData);
+                    //->send
+                    if (senddata == null) throw new Exception("Send Data is null");
+                    iscomplete = this.Server.Send(client, senddata);
+                });
+                _task.Start();
+                await _task;
+            }
+            catch (TimeoutException timeout)
+            {
+                s = timeout;
+            }
+            catch (Exception t)
+            {
+                Log.WriteLog(t);
+                s = t;
+            }
+            finally
+            {
+                if (this.Server.ConnectedClients.ContainsKey(((IPEndPoint)client.RemoteEndPoint).Address.ToString()))
+                    this.Server.ConnectedClients.Remove(((IPEndPoint)client.RemoteEndPoint).Address.ToString());
+                if(s != null)
+                {
+                    throw s;
+                }
+            }
+        }
+        //-->
+        #endregion
+        #region Processing Vision
+        public byte[] Processing(byte[] receivedata)
+        {
+            try
+            {
+                Dictionary<string, Terminal> input = TcpSupport.Serialize.ByteArrayToTerminal(receivedata);
+                Terminal ter_image = input["Image"];
+                Bitmap inputImage = ter_image.Value as Bitmap;
+                CogImage8Grey coginputimage = new CogImage8Grey(inputImage);
+                CogToolBlock.Inputs["InputImage"].Value = coginputimage;
+                CogToolBlock.Run();
+
+                Terminal ter_count = new Terminal("Count", CogToolBlock.Outputs["Count"].Value, typeof(int));
+                Terminal OutputImage1 = new Terminal("OutputImage1", CogToolBlock.Outputs["OutputImage1"].Value, typeof(ICogImage));
+                Terminal OutputImage2 = new Terminal("OutputImage2", CogToolBlock.Outputs["OutputImage2"].Value, typeof(ICogImage));
+                Terminal OutputImage3 = new Terminal("OutputImage3", CogToolBlock.Outputs["OutputImage3"].Value, typeof(ICogImage));
+                Terminal OutputImage4 = new Terminal("OutputImage4", CogToolBlock.Outputs["OutputImage4"].Value, typeof(ICogImage));
+
+                Dictionary<string, Terminal> output = new Dictionary<string, Terminal>();
+                output.Add(ter_count.Name, ter_count);
+                output.Add(OutputImage1.Name, OutputImage1);
+                output.Add(OutputImage2.Name, OutputImage1);
+                output.Add(OutputImage3.Name, OutputImage1);
+                output.Add(OutputImage4.Name, OutputImage1);
+
+                //-->Serialize output to byte array
+
+                byte[] sendata = TcpSupport.Serialize.TerminalToByteArray(output);
+                return sendata;
+
+            }
+            catch (Exception t)
+            {
+                return null;
+            }
+        }
+        #endregion
+
     }
 }
