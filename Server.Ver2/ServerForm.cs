@@ -113,10 +113,6 @@ namespace Server.Ver2
                 Input = TcpSupport.Serialize.ByteArrayToTerminal(receivedData);
                 Terminal ImageTerminal = Input["Image"] as Terminal;
                 Bitmap inputimage = ImageTerminal.Value as Bitmap;
-                this.Display1.Invoke(new Action(() =>
-                {
-                    this.Display1.BackgroundImage = inputimage;
-                }));
             });
             _.Start();
         }
@@ -251,6 +247,15 @@ namespace Server.Ver2
                 Terminal ter_image = input["Image"];
                 Bitmap inputImage = ter_image.Value as Bitmap;
                 CogImage8Grey coginputimage = new CogImage8Grey(inputImage);
+                Thread _showImage = new Thread(() =>
+                {
+                    this.Display.Invoke(new Action(() =>
+                    {
+                        this.Display.Image = coginputimage;
+                    }));
+                });
+                _showImage.IsBackground = true;
+                _showImage.Start();
                 CogToolBlock.Inputs["InputImage"].Value = coginputimage;
                 CogToolBlock.Run();
 
@@ -280,6 +285,10 @@ namespace Server.Ver2
                 byte[] sendata = TcpSupport.Serialize.TerminalToByteArray(output);
                 return sendata;
 
+            }
+            catch(NullReferenceException n)
+            {
+                return null;
             }
             catch (Exception t)
             {

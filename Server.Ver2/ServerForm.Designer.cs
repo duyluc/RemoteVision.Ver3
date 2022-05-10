@@ -29,6 +29,8 @@ namespace Server.Ver2
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServerForm));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -40,15 +42,15 @@ namespace Server.Ver2
             this.tbIp = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tbxMessage = new System.Windows.Forms.TextBox();
-            this.dvAcceptableIp = new IpAddressTable.IpAddressTable();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.Display1 = new System.Windows.Forms.PictureBox();
             this.cbxShowClient = new System.Windows.Forms.ComboBox();
+            this.dvAcceptableIp = new IpAddressTable.IpAddressTable();
+            this.Display = new Cognex.VisionPro.CogRecordDisplay();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.Display1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Display)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -181,6 +183,30 @@ namespace Server.Ver2
             this.tbxMessage.Size = new System.Drawing.Size(234, 320);
             this.tbxMessage.TabIndex = 1;
             // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.ColumnCount = 1;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Controls.Add(this.cbxShowClient, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.Display, 0, 1);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(249, 3);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 2;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(838, 642);
+            this.tableLayoutPanel3.TabIndex = 1;
+            // 
+            // cbxShowClient
+            // 
+            this.cbxShowClient.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbxShowClient.FormattingEnabled = true;
+            this.cbxShowClient.Location = new System.Drawing.Point(3, 3);
+            this.cbxShowClient.Name = "cbxShowClient";
+            this.cbxShowClient.Size = new System.Drawing.Size(832, 21);
+            this.cbxShowClient.TabIndex = 1;
+            // 
             // dvAcceptableIp
             // 
             this.dvAcceptableIp.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
@@ -191,40 +217,23 @@ namespace Server.Ver2
             this.dvAcceptableIp.TabIndex = 2;
             this.dvAcceptableIp.TableChanged += new System.EventHandler(this.AcceptTable_TableChanged);
             // 
-            // tableLayoutPanel3
+            // Display
             // 
-            this.tableLayoutPanel3.ColumnCount = 1;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Controls.Add(this.Display1, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this.cbxShowClient, 0, 0);
-            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(249, 3);
-            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 2;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(838, 642);
-            this.tableLayoutPanel3.TabIndex = 1;
-            // 
-            // Display1
-            // 
-            this.Display1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.Display1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.Display1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Display1.Location = new System.Drawing.Point(3, 29);
-            this.Display1.Name = "Display1";
-            this.Display1.Size = new System.Drawing.Size(832, 610);
-            this.Display1.TabIndex = 0;
-            this.Display1.TabStop = false;
-            // 
-            // cbxShowClient
-            // 
-            this.cbxShowClient.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.cbxShowClient.FormattingEnabled = true;
-            this.cbxShowClient.Location = new System.Drawing.Point(3, 3);
-            this.cbxShowClient.Name = "cbxShowClient";
-            this.cbxShowClient.Size = new System.Drawing.Size(832, 21);
-            this.cbxShowClient.TabIndex = 1;
+            this.Display.ColorMapLowerClipColor = System.Drawing.Color.Black;
+            this.Display.ColorMapLowerRoiLimit = 0D;
+            this.Display.ColorMapPredefined = Cognex.VisionPro.Display.CogDisplayColorMapPredefinedConstants.None;
+            this.Display.ColorMapUpperClipColor = System.Drawing.Color.Black;
+            this.Display.ColorMapUpperRoiLimit = 1D;
+            this.Display.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.Display.DoubleTapZoomCycleLength = 2;
+            this.Display.DoubleTapZoomSensitivity = 2.5D;
+            this.Display.Location = new System.Drawing.Point(3, 29);
+            this.Display.MouseWheelMode = Cognex.VisionPro.Display.CogDisplayMouseWheelModeConstants.Zoom1;
+            this.Display.MouseWheelSensitivity = 1D;
+            this.Display.Name = "Display";
+            this.Display.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("Display.OcxState")));
+            this.Display.Size = new System.Drawing.Size(832, 610);
+            this.Display.TabIndex = 2;
             // 
             // ServerForm
             // 
@@ -242,7 +251,7 @@ namespace Server.Ver2
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.Display1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Display)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -260,10 +269,10 @@ namespace Server.Ver2
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.TextBox tbxMessage;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
-        private System.Windows.Forms.PictureBox Display1;
         private System.Windows.Forms.Button btnToolBlock;
         private System.Windows.Forms.ComboBox cbxShowClient;
         private IpAddressTable.IpAddressTable dvAcceptableIp;
+        private Cognex.VisionPro.CogRecordDisplay Display;
     }
 }
 
