@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Server.Ver1
+namespace Server.Ver2
 {
     public partial class FrmStartup : Form
     {
@@ -38,6 +38,7 @@ namespace Server.Ver1
             }
             this.Invoke(new Action(() => { this.Hide(); }));
             await _t;
+            this.Close();
         }
     }
 }

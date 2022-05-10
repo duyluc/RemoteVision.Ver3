@@ -42,9 +42,9 @@ namespace TcpSupport
 
         public System.Timers.Timer CheckSubcribedClientsTimer;
 
-        public int SendingTimeouttime = 1000;
-        public int ReceivingTimeouttime = 1000;
-        public int ProcessTimeouttime = 2000;
+        public int SendingTimeouttime = 5000;
+        public int ReceivingTimeouttime = 5000;
+        public int ProcessTimeouttime = 5000;
 
         // Event
         public event EventHandler Listening;
@@ -286,7 +286,6 @@ namespace TcpSupport
             try
             {
                 int count4timeout = 0;
-                iscomplete = false;
                 count4timeout = 0;
                 Thread _send = new Thread(() =>
                 {
@@ -297,7 +296,7 @@ namespace TcpSupport
                 _send.Start();
                 while (count4timeout < (ReceivingTimeouttime / 10) && !iscomplete)
                 {
-                    Task.Delay(10);
+                    Thread.Sleep(10);
                     count4timeout++;
                 }
                 if (!iscomplete)
@@ -309,6 +308,7 @@ namespace TcpSupport
             {
                 throw t;
             }
+            if (iscomplete) OnSended();
             return iscomplete;
         }
 
@@ -343,6 +343,7 @@ namespace TcpSupport
                 throw t;
             }
             _iscomplete = iscomplete;
+            if (_iscomplete) OnReceived(receivedata);
             return receivedata;
         }
 

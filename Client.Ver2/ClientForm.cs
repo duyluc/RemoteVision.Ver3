@@ -51,12 +51,12 @@ namespace Client.Ver2
 
         private void TcpClient_ReceivedTimeout(object sender, EventArgs e)
         {
-            ShowMessage("Receive Timeout!");
+            ShowMessage(">>> Receive Timeout!");
         }
 
         private void TcpClient_SendTimeout(object sender, EventArgs e)
         {
-            ShowMessage("Send Timeout!");
+            ShowMessage(">>> Send Timeout!");
         }
 
         private void TcpClient_Received(object sender, EventArgs e)
@@ -67,6 +67,7 @@ namespace Client.Ver2
                 {
                     long deserializetime = 0;
                     byte[] receivedData = ((TcpArgs)e).Data;
+                    this.ShowMessage($"<<------------------>>");
                     this.ShowMessage($"Receive: {receivedData.Length} byte");
                     Input = Serialize.ByteArrayToTerminal(receivedData, out deserializetime);
                     this.ShowMessage($"Deserialization Time: {deserializetime} ms");
@@ -106,12 +107,14 @@ namespace Client.Ver2
                                     this.Display4.BackgroundImage = ter.Value as Bitmap;
                                 }));
                                 break;
+                            default: break;
                         }
                     }
+                    this.ShowMessage($"<<------------------>>\n\n\n");
                 }
                 catch (Exception t)
                 {
-                    this.ShowMessage($"Desiralization data: {t.Message}");
+                    this.ShowMessage($">>> Desiralization data: {t.Message}");
                 }
             });
             _.Start();
@@ -138,7 +141,7 @@ namespace Client.Ver2
         private void btnSend_Click(object sender, EventArgs e)
         {
             if (TransferStatus == Status.Busy) return;
-            TransferStatus = Status.Busy;
+            
             Bitmap image = null;
             Bitmap simage = null;
             try
@@ -152,12 +155,11 @@ namespace Client.Ver2
             }
             catch(Exception t)
             {
-                ShowMessage($"Load Image: {t.Message}");
+                ShowMessage($">>> Load Image: {t.Message}");
                 return;
             }
-
+            TransferStatus = Status.Busy;
             Task _ = Transfer(image);
-            this.Display1.Invoke(new Action(() => { this.Display1.BackgroundImage = simage; }));
         }
         
         public async Task Transfer(Bitmap subject)
@@ -181,7 +183,7 @@ namespace Client.Ver2
                     }
                     catch (Exception t)
                     {
-                        this.ShowMessage(t.Message);
+                        this.ShowMessage($">>> {t.Message}");
                     }
                 });
                 Task _serialize = new Task(() =>
@@ -198,7 +200,7 @@ namespace Client.Ver2
                     }
                     catch (Exception t)
                     {
-                        ShowMessage($"Serialization processing: {t.Message}");
+                        ShowMessage($">>> Serialization processing: {t.Message}");
                         throw t;
                     }
                 });
@@ -222,7 +224,7 @@ namespace Client.Ver2
                 }
                 catch (Exception t)
                 {
-                    this.ShowMessage(t.Message);
+                    this.ShowMessage($">>> {t.Message}");
                     throw t;
                 }
             }
@@ -244,7 +246,7 @@ namespace Client.Ver2
                 if(ofd.ShowDialog() == DialogResult.OK)
                 {
                     this.TestImagPath = ofd.FileName;
-                    this.ShowMessage($"Selected {this.TestImagPath}");
+                    this.ShowMessage($">>> Selected {this.TestImagPath}");
                 }
             }
         }

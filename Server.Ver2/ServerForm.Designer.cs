@@ -1,5 +1,5 @@
 ﻿
-namespace Server.Ver1
+namespace Server.Ver2
 {
     partial class ServerForm
     {
@@ -40,8 +40,10 @@ namespace Server.Ver1
             this.tbIp = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tbxMessage = new System.Windows.Forms.TextBox();
+            this.dvAcceptableIp = new IpAddressTable.IpAddressTable();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.Display1 = new System.Windows.Forms.PictureBox();
+            this.cbxShowClient = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -76,6 +78,7 @@ namespace Server.Ver1
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel2.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.tbxMessage, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.dvAcceptableIp, 0, 1);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -178,17 +181,28 @@ namespace Server.Ver1
             this.tbxMessage.Size = new System.Drawing.Size(234, 320);
             this.tbxMessage.TabIndex = 1;
             // 
+            // dvAcceptableIp
+            // 
+            this.dvAcceptableIp.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dvAcceptableIp.DbProvider = null;
+            this.dvAcceptableIp.Location = new System.Drawing.Point(3, 80);
+            this.dvAcceptableIp.Name = "dvAcceptableIp";
+            this.dvAcceptableIp.Size = new System.Drawing.Size(234, 233);
+            this.dvAcceptableIp.TabIndex = 2;
+            this.dvAcceptableIp.TableChanged += new System.EventHandler(this.AcceptTable_TableChanged);
+            // 
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.ColumnCount = 1;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.Controls.Add(this.Display1, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.cbxShowClient, 0, 0);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(249, 3);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 2;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 617F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.Size = new System.Drawing.Size(838, 642);
             this.tableLayoutPanel3.TabIndex = 1;
             // 
@@ -197,11 +211,20 @@ namespace Server.Ver1
             this.Display1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.Display1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.Display1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Display1.Location = new System.Drawing.Point(3, 28);
+            this.Display1.Location = new System.Drawing.Point(3, 29);
             this.Display1.Name = "Display1";
-            this.Display1.Size = new System.Drawing.Size(832, 611);
+            this.Display1.Size = new System.Drawing.Size(832, 610);
             this.Display1.TabIndex = 0;
             this.Display1.TabStop = false;
+            // 
+            // cbxShowClient
+            // 
+            this.cbxShowClient.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.cbxShowClient.FormattingEnabled = true;
+            this.cbxShowClient.Location = new System.Drawing.Point(3, 3);
+            this.cbxShowClient.Name = "cbxShowClient";
+            this.cbxShowClient.Size = new System.Drawing.Size(832, 21);
+            this.cbxShowClient.TabIndex = 1;
             // 
             // ServerForm
             // 
@@ -239,6 +262,8 @@ namespace Server.Ver1
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.PictureBox Display1;
         private System.Windows.Forms.Button btnToolBlock;
+        private System.Windows.Forms.ComboBox cbxShowClient;
+        private IpAddressTable.IpAddressTable dvAcceptableIp;
     }
 }
 

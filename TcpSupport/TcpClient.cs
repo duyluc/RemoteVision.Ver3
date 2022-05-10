@@ -31,9 +31,9 @@ namespace TcpSupport
         public event EventHandler ReceivedTimeout;
         public event EventHandler ProcessTimeout;
 
-        public int SendingTimeouttime = 1000;
-        public int ReceivingTimeouttime = 1000;
-        public int ProcessTimeouttime = 2000;
+        public int SendingTimeouttime = 5000;
+        public int ReceivingTimeouttime = 5000;
+        public int ProcessTimeouttime = 5000;
 
         public void OnConnected()
         {

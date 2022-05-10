@@ -32,6 +32,7 @@ namespace Client.Ver2
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnSelectImage = new System.Windows.Forms.Button();
             this.btnSend = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.tbxPort = new System.Windows.Forms.TextBox();
@@ -43,7 +44,6 @@ namespace Client.Ver2
             this.Display3 = new System.Windows.Forms.PictureBox();
             this.Display2 = new System.Windows.Forms.PictureBox();
             this.Display1 = new System.Windows.Forms.PictureBox();
-            this.btnSelectImage = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -98,6 +98,16 @@ namespace Client.Ver2
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(260, 65);
             this.panel1.TabIndex = 0;
+            // 
+            // btnSelectImage
+            // 
+            this.btnSelectImage.Location = new System.Drawing.Point(132, 36);
+            this.btnSelectImage.Name = "btnSelectImage";
+            this.btnSelectImage.Size = new System.Drawing.Size(59, 23);
+            this.btnSelectImage.TabIndex = 5;
+            this.btnSelectImage.Text = "Search";
+            this.btnSelectImage.UseVisualStyleBackColor = true;
+            this.btnSelectImage.Click += new System.EventHandler(this.btnSelectImage_Click);
             // 
             // btnSend
             // 
@@ -175,6 +185,7 @@ namespace Client.Ver2
             // 
             // Display4
             // 
+            this.Display4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.Display4.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.Display4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Display4.Location = new System.Drawing.Point(364, 322);
@@ -185,6 +196,7 @@ namespace Client.Ver2
             // 
             // Display3
             // 
+            this.Display3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.Display3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.Display3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Display3.Location = new System.Drawing.Point(3, 322);
@@ -195,6 +207,7 @@ namespace Client.Ver2
             // 
             // Display2
             // 
+            this.Display2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.Display2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.Display2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Display2.Location = new System.Drawing.Point(364, 3);
@@ -213,16 +226,6 @@ namespace Client.Ver2
             this.Display1.Size = new System.Drawing.Size(355, 313);
             this.Display1.TabIndex = 0;
             this.Display1.TabStop = false;
-            // 
-            // btnSelectImage
-            // 
-            this.btnSelectImage.Location = new System.Drawing.Point(132, 36);
-            this.btnSelectImage.Name = "btnSelectImage";
-            this.btnSelectImage.Size = new System.Drawing.Size(59, 23);
-            this.btnSelectImage.TabIndex = 5;
-            this.btnSelectImage.Text = "Search";
-            this.btnSelectImage.UseVisualStyleBackColor = true;
-            this.btnSelectImage.Click += new System.EventHandler(this.btnSelectImage_Click);
             // 
             // ClientForm
             // 

@@ -17,7 +17,7 @@ using VisionSupport;
 using CognexVisionSupport;
 using Cognex.VisionPro;
 
-namespace Server.Ver1
+namespace Server.Ver2
 {
     public partial class ServerForm : Form
     {
@@ -26,12 +26,12 @@ namespace Server.Ver1
         public Dictionary<string, Terminal> Output { get; set; }
         public static CogToolBlock CogToolBlock { get; set; }
         static public bool IsStartuped { get; set; } = false;
+        public List<string> AcceptableClient;
 
         public ServerForm()
         {
             this.Hide();
             InitializeComponent();
-            
         }
 
         private void ServerForm_Load(object sender, EventArgs e)
@@ -48,8 +48,11 @@ namespace Server.Ver1
             this.Server.ReceivedTimeout += Server_ReceivedTimeout;
             this.Server.ProcessTimeout += Server_ProcessTimeout;
             this.Server.Received += Server_Received;
-            CogToolBlock = CognexVisionSupport.Serialize.LoadToolBlock(@"C:\Users\duong\Desktop\Test_RemoteServer\ToolBlock\tool.vpp") as CogToolBlock;
+            this.dvAcceptableIp.Initial(this.dvAcceptableIp.Name);
+            CogToolBlock = CognexVisionSupport.Serialize.LoadToolBlock(@"C:\Users\duong\source\repos\RemoteVision.Ver3\Sources\ToolBlock\tool1.vpp") as CogToolBlock;
             IsStartuped = true;
+            AcceptableClient = new List<string>();
+            this.Server.AcceptClientMode = TcpServer.Mode.BaseClientList;
             this.Show();
         }
 
@@ -139,14 +142,18 @@ namespace Server.Ver1
             if (connectClinet == null) return;
             string ip = ((IPEndPoint)connectClinet.RemoteEndPoint).Address.ToString();
             int port = ((IPEndPoint)connectClinet.RemoteEndPoint).Port;
-            ShowMessage($"Accpeted Connect From: {ip}:{port}");
-
             try
             {
                 if (this.Server.AcceptClientMode == TcpServer.Mode.BaseClientList)
                 {
-                    if (!this.Server.AccessableClients.Contains(((IPEndPoint)connectClinet.RemoteEndPoint).Address.ToString())) return;
+                    if (!this.Server.AccessableClients.Contains(ip))
+                    {
+                        ShowMessage($">>> Block IP: {ip}:{port.ToString()}");
+                        connectClinet.Disconnect(false);
+                        return;
+                    }
                 }
+                ShowMessage($"Accpeted Connect From: {ip}:{port}");
                 this.Server.ConnectedClients.Add(((IPEndPoint)connectClinet.RemoteEndPoint).Address.ToString(), connectClinet);
                 Task _ = this.ClientServiceTask(connectClinet);
             }
@@ -225,6 +232,14 @@ namespace Server.Ver1
                 }
             }
         }
+
+
+
+        private void AcceptTable_TableChanged(object sender, EventArgs e)
+        {
+            this.Server.AccessableClients = (List<string>)sender;
+            if (this.Server.AccessableClients.Count == 0) this.cbxShowClient.Items.Clear();
+        }
         //-->
         #endregion
         #region Processing Vision
@@ -272,6 +287,5 @@ namespace Server.Ver1
             }
         }
         #endregion
-
     }
 }
