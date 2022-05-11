@@ -86,16 +86,36 @@ namespace TcpSupport
             IPAddress ip = IPAddress.Parse(_ip);
             IPEndPoint iPEndpoint = new IPEndPoint(ip, _port);
             this.Client = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            bool _connected = false;
             for(int i = 0; i < 3; i++)
             {
+                Thread _connect = null ;
                 try
                 {
-                    this.Client.Connect(iPEndpoint);
-                    if (this.Client.Connected) break;
+                    _connect = new Thread(() =>
+                    {
+                        this.Client.Connect(iPEndpoint);
+                        if (this.Client.Connected) _connected = true;
+                    });
+                    _connect.Start();
+                    int count = 0;
+                    while(count < 20 && !_connected)
+                    {
+                        Thread.Sleep(5);
+                    }
+                    if (_connected)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        _connect.Abort();
+                    }
                 }
                 catch (Exception t)
                 {
-                    
+                    if(_connect != null)
+                        _connect.Abort();
                 }
             }
             if (!this.Client.Connected) return false;

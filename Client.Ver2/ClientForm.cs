@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -20,8 +15,10 @@ namespace Client.Ver2
         public TcpClient TcpClient { get; set; }
         Stopwatch sw = new Stopwatch();
 
-        string TestImagPath = ""; //->TEST
+        public Dictionary<string, Bitmap> InputImageList;
 
+        string TestImagPath = ""; //->TEST
+        int SerializeTimeout = 1000;
         public enum Status
         {
             Free,
@@ -31,21 +28,23 @@ namespace Client.Ver2
         public Status TransferStatus { get; set; }
 
         //INPUT OUTPUT
-        private Dictionary<string,Terminal> Output { get; set; }
-        private Dictionary<string,Terminal> Input { get; set; }
+        private Dictionary<string, Terminal> Output { get; set; }
+        private Dictionary<string, Terminal> Input { get; set; }
 
         public ClientForm()
         {
             InitializeComponent();
-            this.TcpClient = new TcpClient();
-            this.TcpClient.Connected += TcpClient_Connected;
-            this.TcpClient.Disconnected += TcpClient_Disconnected;
-            this.TcpClient.Sended += TcpClient_Sended;
-            this.TcpClient.Received += TcpClient_Received;
-            this.TcpClient.SendTimeout += TcpClient_SendTimeout;
-            this.TcpClient.ReceivedTimeout += TcpClient_ReceivedTimeout;
-            this.Output = new Dictionary<string, Terminal>();
-            this.Input = new Dictionary<string, Terminal>();
+            TcpClient = new TcpClient();
+            TcpClient.Connected += TcpClient_Connected;
+            TcpClient.Disconnected += TcpClient_Disconnected;
+            TcpClient.Sended += TcpClient_Sended;
+            TcpClient.Received += TcpClient_Received;
+            TcpClient.SendTimeout += TcpClient_SendTimeout;
+            TcpClient.ReceivedTimeout += TcpClient_ReceivedTimeout;
+            Output = new Dictionary<string, Terminal>();
+            Input = new Dictionary<string, Terminal>();
+            InputImageList = new Dictionary<string, Bitmap>();
+            this.cbxInputImageList.DropDownStyle = ComboBoxStyle.DropDownList;
             TransferStatus = Status.Free;
         }
 
@@ -65,56 +64,62 @@ namespace Client.Ver2
             {
                 try
                 {
+
+                    //update cbxInputImageList
                     long deserializetime = 0;
                     byte[] receivedData = ((TcpArgs)e).Data;
-                    this.ShowMessage($"<<------------------>>");
-                    this.ShowMessage($"Receive: {receivedData.Length} byte");
+                    ShowMessage($"<<------------------>>");
+                    ShowMessage($"Receive: {receivedData.Length} byte");
                     Input = Serialize.ByteArrayToTerminal(receivedData, out deserializetime);
-                    this.ShowMessage($"Deserialization Time: {deserializetime} ms");
+                    ShowMessage($"Deserialization Time: {deserializetime} ms");
+                    string _lastsellectedvalue = null;
+                    int _lastsellectedindex = -1;
+                    this.cbxInputImageList.Invoke(new Action(() => 
+                    {
+                        if(this.cbxInputImageList.SelectedItem != null)
+                            _lastsellectedvalue =  this.cbxInputImageList.SelectedItem.ToString();
+                        _lastsellectedindex = this.cbxInputImageList.SelectedIndex;
+                    }));
+                    this.InputImageList.Clear();
+                    this.cbxInputImageList.Invoke(new Action(() => { this.cbxInputImageList.Items.Clear(); }));
+                    
                     foreach (KeyValuePair<string, Terminal> t in Input)
                     {
                         Terminal ter = t.Value;
-                        switch (t.Value.Name)
+                        if(ter.Type == typeof(Bitmap))
                         {
-                            case "Count":
-                                this.ShowMessage($"Finded Pattern: {(int)ter.Value}");
-                                break;
-                            case "OutputImage1":
-                                if (ter.Value == null) break;
-                                this.Display1.Invoke(new Action(() =>
-                                {
-                                    this.Display1.BackgroundImage = ter.Value as Bitmap;
-                                }));
-                                break;
-                            case "OutputImage2":
-                                if (ter.Value == null) break;
-                                this.Display2.Invoke(new Action(() =>
-                                {
-                                    this.Display2.BackgroundImage = ter.Value as Bitmap;
-                                }));
-                                break;
-                            case "OutputImage3":
-                                if (ter.Value == null) break;
-                                this.Display3.Invoke(new Action(() =>
-                                {
-                                    this.Display3.BackgroundImage = ter.Value as Bitmap;
-                                }));
-                                break;
-                            case "OutputImage4":
-                                if (ter.Value == null) break;
-                                this.Display4.Invoke(new Action(() =>
-                                {
-                                    this.Display4.BackgroundImage = ter.Value as Bitmap;
-                                }));
-                                break;
-                            default: break;
+                            this.InputImageList.Add(ter.Name,(Bitmap)ter.Value);
+                            this.cbxInputImageList.Invoke(new Action(() => { this.cbxInputImageList.Items.Add(ter.Name); }));
+                        }
+                        else
+                        {
+                            ShowMessage($"{ter.Name}: {ter.Value.ToString()}");
                         }
                     }
-                    this.ShowMessage($"<<------------------>>\n\n\n");
+                    if (_lastsellectedvalue != null)
+                    {
+                        if (this.InputImageList.ContainsKey(_lastsellectedvalue)) 
+                            this.cbxInputImageList.Invoke(new Action(() => { this.cbxInputImageList.SelectedIndex = _lastsellectedindex; }));
+                        else
+                        {
+                            this.cbxInputImageList.Invoke(new Action(() => { this.cbxInputImageList.SelectedIndex = -1; }));
+                        }
+                    }
+                    else if(this.InputImageList.Count >0)
+                    {
+                        this.cbxInputImageList.Invoke(new Action(() => { this.cbxInputImageList.SelectedIndex = 0; }));
+                    }
+                    else
+                    {
+                        this.cbxInputImageList.Invoke(new Action(() => { this.cbxInputImageList.SelectedIndex = -1; }));
+                    }
+                    
+                    
+                    ShowMessage($"<<------------------>>\n\n\n");
                 }
                 catch (Exception t)
                 {
-                    this.ShowMessage($">>> Desiralization data: {t.Message}");
+                    ShowMessage($">>> Desiralization data: {t.Message}");
                 }
             });
             _.Start();
@@ -130,30 +135,30 @@ namespace Client.Ver2
 
         private void TcpClient_Connected(object sender, EventArgs e)
         {
-            
+
         }
 
         public void ShowMessage(string t)
         {
-            this.tbxMessage.Invoke(new Action(() => { this.tbxMessage.Text += t + Environment.NewLine; }));
+            tbxMessage.Invoke(new Action(() => { tbxMessage.Text += t + Environment.NewLine; }));
         }
 
         private void btnSend_Click(object sender, EventArgs e)
         {
             if (TransferStatus == Status.Busy) return;
-            
+
             Bitmap image = null;
             Bitmap simage = null;
             try
             {
-                using (Bitmap _image = new Bitmap(this.TestImagPath)) //->TEST
+                using (Bitmap _image = new Bitmap(TestImagPath)) //->TEST
                 {
                     image = new Bitmap(_image);
                     simage = new Bitmap(_image);
                 }
                 if (image == null || simage == null) throw new Exception("Image is NUll");
             }
-            catch(Exception t)
+            catch (Exception t)
             {
                 ShowMessage($">>> Load Image: {t.Message}");
                 return;
@@ -161,7 +166,7 @@ namespace Client.Ver2
             TransferStatus = Status.Busy;
             Task _ = Transfer(image);
         }
-        
+
         public async Task Transfer(Bitmap subject)
         {
             try
@@ -177,13 +182,13 @@ namespace Client.Ver2
                 {
                     try
                     {
-                        string ip = this.tbxIp.Text;
-                        int port = int.Parse(this.tbxPort.Text);
-                        isconnected = this.TcpClient.Connect(ip, port, out ConnectTime);
+                        string ip = tbxIp.Text;
+                        int port = int.Parse(tbxPort.Text);
+                        isconnected = TcpClient.Connect(ip, port, out ConnectTime);
                     }
                     catch (Exception t)
                     {
-                        this.ShowMessage($">>> {t.Message}");
+                        ShowMessage($">>> {t.Message}");
                     }
                 });
                 Task _serialize = new Task(() =>
@@ -191,11 +196,11 @@ namespace Client.Ver2
                     try
                     {
                         Terminal outputImage = new Terminal("Image", subject, typeof(Bitmap));
-                        if (!this.Output.ContainsKey(outputImage.Name))
-                            this.Output.Add(outputImage.Name, outputImage);
+                        if (!Output.ContainsKey(outputImage.Name))
+                            Output.Add(outputImage.Name, outputImage);
                         else
-                            this.Output[outputImage.Name] = outputImage;
-                        _sendData = Serialize.TerminalToByteArray(this.Output, out SerializeTime);
+                            Output[outputImage.Name] = outputImage;
+                        _sendData = Serialize.TerminalToByteArray(Output, out SerializeTime);
                         isserialize = true;
                     }
                     catch (Exception t)
@@ -206,48 +211,82 @@ namespace Client.Ver2
                 });
                 _connect.Start();
                 _serialize.Start();
-                await Task.WhenAll(_connect, _serialize);
+                //await Task.WhenAll(_connect, _serialize);
+                int count = 0;
+                while (count < SerializeTimeout / 10 && (!isconnected||!isserialize))
+                {
+                    await Task.Delay(10);
+                    count++;
+                }
                 if (!isconnected) throw new Exception("Can not connect to Server!");
                 if (!isserialize) throw new Exception("Can not Serialize!");
                 try
                 {
 
-                    Runtime = await this.TcpClient.Run(_sendData, false);
-                    sw.Stop();
-                    ShowMessage("<<-------------------->>");
-                    ShowMessage($"Connect Time: {ConnectTime} ms");
-                    ShowMessage($"Serialize Time: {SerializeTime} ms");
-                    ShowMessage($"Run Time: {Runtime} ms");
-                    ShowMessage($"TactTime: {sw.ElapsedMilliseconds} ms");
-                    ShowMessage("<<-------------------->>");
-                    sw.Reset();
+                    Runtime = await TcpClient.Run(_sendData, false);
+                    
                 }
                 catch (Exception t)
                 {
-                    this.ShowMessage($">>> {t.Message}");
+                    ShowMessage($">>> {t.Message}");
                     throw t;
                 }
+                ShowMessage("<<-------------------->>");
+                ShowMessage($"Connect Time: {ConnectTime} ms");
+                ShowMessage($"Serialize Time: {SerializeTime} ms");
+                ShowMessage($"Run Time: {Runtime} ms");
+                ShowMessage($"TactTime: {sw.ElapsedMilliseconds} ms");
+                ShowMessage("<<-------------------->>");
             }
-            catch(Exception t)
+            catch (Exception t)
             {
-
+                ShowMessage($">>> {t.Message}");
             }
             finally
             {
-                this.TransferStatus = Status.Free;
+                sw.Stop();
+                sw.Reset();
+                TransferStatus = Status.Free;
             }
         }
 
         private void btnSelectImage_Click(object sender, EventArgs e)
         {
-            using(OpenFileDialog ofd = new OpenFileDialog())
+            using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 ofd.InitialDirectory = @"C:\\";
-                if(ofd.ShowDialog() == DialogResult.OK)
+                if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    this.TestImagPath = ofd.FileName;
-                    this.ShowMessage($">>> Selected {this.TestImagPath}");
+                    TestImagPath = ofd.FileName;
+                    ShowMessage($">>> Selected {TestImagPath}");
                 }
+            }
+        }
+
+        private void cbxInputImageList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int index = ((ComboBox)sender).SelectedIndex;
+            if (index == -1) return;
+            try
+            {
+                this.Display.Image = this.InputImageList[((ComboBox)sender).SelectedItem.ToString()];
+            }
+            catch(Exception t)
+            {
+                ShowMessage(t.Message);
+            }
+        }
+
+        private void cbxInputImageList_SelectedIndexChanged(int index)
+        {
+            if (index == -1) return;
+            try
+            {
+                this.Display.Invoke(new Action(() => { this.Display.Image = this.InputImageList[this.cbxInputImageList.Items[index].ToString()]; }));
+            }
+            catch (Exception t)
+            {
+                ShowMessage(t.Message);
             }
         }
     }

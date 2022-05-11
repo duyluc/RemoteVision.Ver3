@@ -250,29 +250,24 @@ namespace Server.Ver2
                 CogImage8Grey coginputimage = new CogImage8Grey(inputImage);
                 CogToolBlock.Inputs["InputImage"].Value = coginputimage;
                 CogToolBlock.Run();
-                Bitmap Image = ((ICogImage)CogToolBlock.Outputs["OutputImage"].Value).ToBitmap();
-                Bitmap Image1 = ((ICogImage)CogToolBlock.Outputs["OutputImage1"].Value).ToBitmap();
-                Bitmap Image2 = ((ICogImage)CogToolBlock.Outputs["OutputImage2"].Value).ToBitmap();
-                Bitmap Image3 = ((ICogImage)CogToolBlock.Outputs["OutputImage3"].Value).ToBitmap();
-                Bitmap Image4 = ((ICogImage)CogToolBlock.Outputs["OutputImage4"].Value).ToBitmap();
-
-                Terminal ter_count = new Terminal("Count", CogToolBlock.Outputs["Count"].Value, typeof(int));
-                Terminal OutputImage = new Terminal("OutputImage", Image, typeof(ICogImage));
-                Terminal OutputImage1 = new Terminal("OutputImage1", Image1, typeof(ICogImage));
-                Terminal OutputImage2 = new Terminal("OutputImage2", Image2, typeof(ICogImage));
-                Terminal OutputImage3 = new Terminal("OutputImage3", Image3, typeof(ICogImage));
-                Terminal OutputImage4 = new Terminal("OutputImage4", Image4, typeof(ICogImage));
-
                 Dictionary<string, Terminal> output = new Dictionary<string, Terminal>();
-                output.Add(ter_count.Name, ter_count);
-                output.Add(OutputImage.Name, OutputImage);
-                output.Add(OutputImage1.Name, OutputImage1);
-                output.Add(OutputImage2.Name, OutputImage2);
-                output.Add(OutputImage3.Name, OutputImage3);
-                output.Add(OutputImage4.Name, OutputImage4);
+
+                foreach (CogToolBlockTerminal ter in CogToolBlock.Outputs)
+                {
+                    if (ter.ValueType == typeof(ICogImage))
+                    {
+                        Bitmap image = ((ICogImage)ter.Value).ToBitmap();
+                        Terminal outterminal = new Terminal(ter.Name,image,typeof(Bitmap));
+                        output.Add(outterminal.Name,outterminal);
+                    }
+                    else
+                    {
+                        Terminal outterminal = new Terminal(ter.Name,ter.Value,ter.ValueType);
+                        output.Add(outterminal.Name, outterminal);
+                    }
+                }
 
                 //-->Serialize output to byte array
-
                 byte[] sendata = TcpSupport.Serialize.TerminalToByteArray(output);
                 return sendata;
 
