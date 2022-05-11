@@ -29,8 +29,6 @@ namespace Server.Ver2
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServerForm));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -42,15 +40,14 @@ namespace Server.Ver2
             this.tbIp = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tbxMessage = new System.Windows.Forms.TextBox();
+            this.dvAcceptableIp = new IpAddressTable.IpAddressTable();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.cbxShowClient = new System.Windows.Forms.ComboBox();
-            this.dvAcceptableIp = new IpAddressTable.IpAddressTable();
-            this.Display = new Cognex.VisionPro.CogRecordDisplay();
+            this.MainDisplay = new Cognex.VisionPro.CogToolDisplay();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.Display)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -183,12 +180,23 @@ namespace Server.Ver2
             this.tbxMessage.Size = new System.Drawing.Size(234, 320);
             this.tbxMessage.TabIndex = 1;
             // 
+            // dvAcceptableIp
+            // 
+            this.dvAcceptableIp.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.dvAcceptableIp.DbProvider = null;
+            this.dvAcceptableIp.Location = new System.Drawing.Point(4, 81);
+            this.dvAcceptableIp.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dvAcceptableIp.Name = "dvAcceptableIp";
+            this.dvAcceptableIp.Size = new System.Drawing.Size(232, 231);
+            this.dvAcceptableIp.TabIndex = 2;
+            this.dvAcceptableIp.TableChanged += new System.EventHandler(this.AcceptTable_TableChanged);
+            // 
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.ColumnCount = 1;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel3.Controls.Add(this.cbxShowClient, 0, 0);
-            this.tableLayoutPanel3.Controls.Add(this.Display, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this.MainDisplay, 0, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(249, 3);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
@@ -207,33 +215,19 @@ namespace Server.Ver2
             this.cbxShowClient.Size = new System.Drawing.Size(832, 21);
             this.cbxShowClient.TabIndex = 1;
             // 
-            // dvAcceptableIp
+            // MainDisplay
             // 
-            this.dvAcceptableIp.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.dvAcceptableIp.DbProvider = null;
-            this.dvAcceptableIp.Location = new System.Drawing.Point(3, 80);
-            this.dvAcceptableIp.Name = "dvAcceptableIp";
-            this.dvAcceptableIp.Size = new System.Drawing.Size(234, 233);
-            this.dvAcceptableIp.TabIndex = 2;
-            this.dvAcceptableIp.TableChanged += new System.EventHandler(this.AcceptTable_TableChanged);
-            // 
-            // Display
-            // 
-            this.Display.ColorMapLowerClipColor = System.Drawing.Color.Black;
-            this.Display.ColorMapLowerRoiLimit = 0D;
-            this.Display.ColorMapPredefined = Cognex.VisionPro.Display.CogDisplayColorMapPredefinedConstants.None;
-            this.Display.ColorMapUpperClipColor = System.Drawing.Color.Black;
-            this.Display.ColorMapUpperRoiLimit = 1D;
-            this.Display.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Display.DoubleTapZoomCycleLength = 2;
-            this.Display.DoubleTapZoomSensitivity = 2.5D;
-            this.Display.Location = new System.Drawing.Point(3, 29);
-            this.Display.MouseWheelMode = Cognex.VisionPro.Display.CogDisplayMouseWheelModeConstants.Zoom1;
-            this.Display.MouseWheelSensitivity = 1D;
-            this.Display.Name = "Display";
-            this.Display.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("Display.OcxState")));
-            this.Display.Size = new System.Drawing.Size(832, 610);
-            this.Display.TabIndex = 2;
+            this.MainDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.MainDisplay.Location = new System.Drawing.Point(2, 28);
+            this.MainDisplay.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MainDisplay.Name = "MainDisplay";
+            this.MainDisplay.SelectedRecordKey = null;
+            this.MainDisplay.ShowRecordsDropDown = true;
+            this.MainDisplay.Size = new System.Drawing.Size(834, 612);
+            this.MainDisplay.TabIndex = 2;
+            this.MainDisplay.Tool = null;
+            this.MainDisplay.ToolSyncObject = null;
+            this.MainDisplay.UserRecord = null;
             // 
             // ServerForm
             // 
@@ -251,7 +245,6 @@ namespace Server.Ver2
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.Display)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -272,7 +265,7 @@ namespace Server.Ver2
         private System.Windows.Forms.Button btnToolBlock;
         private System.Windows.Forms.ComboBox cbxShowClient;
         private IpAddressTable.IpAddressTable dvAcceptableIp;
-        private Cognex.VisionPro.CogRecordDisplay Display;
+        private Cognex.VisionPro.CogToolDisplay MainDisplay;
     }
 }
 

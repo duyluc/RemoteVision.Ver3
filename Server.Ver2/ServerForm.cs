@@ -49,7 +49,8 @@ namespace Server.Ver2
             this.Server.ProcessTimeout += Server_ProcessTimeout;
             this.Server.Received += Server_Received;
             this.dvAcceptableIp.Initial(this.dvAcceptableIp.Name);
-            CogToolBlock = CognexVisionSupport.Serialize.LoadToolBlock(@"C:\Users\duong\source\repos\RemoteVision.Ver3\Sources\ToolBlock\tool1.vpp") as CogToolBlock;
+            CogToolBlock = CognexVisionSupport.Serialize.LoadToolBlock(@"D:\TAI LIEU CONG VIEC\PROJECT SOURCE\RemoteVision.Ver3\Sources\ToolBlock\tool1.vpp") as CogToolBlock;
+            this.MainDisplay.Tool = CogToolBlock;
             IsStartuped = true;
             AcceptableClient = new List<string>();
             this.Server.AcceptClientMode = TcpServer.Mode.BaseClientList;
@@ -247,18 +248,8 @@ namespace Server.Ver2
                 Terminal ter_image = input["Image"];
                 Bitmap inputImage = ter_image.Value as Bitmap;
                 CogImage8Grey coginputimage = new CogImage8Grey(inputImage);
-                Thread _showImage = new Thread(() =>
-                {
-                    this.Display.Invoke(new Action(() =>
-                    {
-                        this.Display.Image = coginputimage;
-                    }));
-                });
-                _showImage.IsBackground = true;
-                _showImage.Start();
                 CogToolBlock.Inputs["InputImage"].Value = coginputimage;
                 CogToolBlock.Run();
-
                 Bitmap Image = ((ICogImage)CogToolBlock.Outputs["OutputImage"].Value).ToBitmap();
                 Bitmap Image1 = ((ICogImage)CogToolBlock.Outputs["OutputImage1"].Value).ToBitmap();
                 Bitmap Image2 = ((ICogImage)CogToolBlock.Outputs["OutputImage2"].Value).ToBitmap();

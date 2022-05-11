@@ -16,6 +16,6 @@ namespace Server.Ver2
         {
             InitializeComponent();
             this.CogToolBlockEditer.Subject = ServerForm.CogToolBlock;
-        }
+    }
     }
 }

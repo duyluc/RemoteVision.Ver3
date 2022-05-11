@@ -29,12 +29,29 @@ namespace Server.Ver2
         /// </summary>
         private void InitializeComponent()
         {
+            this.CogToolBlockEditer = new Cognex.VisionPro.ToolBlock.CogToolBlockEditV2();
+            ((System.ComponentModel.ISupportInitialize)(this.CogToolBlockEditer)).BeginInit();
             this.SuspendLayout();
+            // 
+            // CogToolBlockEditer
+            // 
+            this.CogToolBlockEditer.AllowDrop = true;
+            this.CogToolBlockEditer.ContextMenuCustomizer = null;
+            this.CogToolBlockEditer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.CogToolBlockEditer.Location = new System.Drawing.Point(0, 0);
+            this.CogToolBlockEditer.MinimumSize = new System.Drawing.Size(489, 0);
+            this.CogToolBlockEditer.Name = "CogToolBlockEditer";
+            this.CogToolBlockEditer.ShowNodeToolTips = true;
+            this.CogToolBlockEditer.Size = new System.Drawing.Size(967, 652);
+            this.CogToolBlockEditer.SuspendElectricRuns = false;
+            this.CogToolBlockEditer.TabIndex = 0;
             // 
             // ToolForm
             // 
             this.ClientSize = new System.Drawing.Size(967, 652);
+            this.Controls.Add(this.CogToolBlockEditer);
             this.Name = "ToolForm";
+            ((System.ComponentModel.ISupportInitialize)(this.CogToolBlockEditer)).EndInit();
             this.ResumeLayout(false);
 
         }
