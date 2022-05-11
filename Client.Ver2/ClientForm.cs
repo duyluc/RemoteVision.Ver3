@@ -64,7 +64,6 @@ namespace Client.Ver2
             {
                 try
                 {
-
                     //update cbxInputImageList
                     long deserializetime = 0;
                     byte[] receivedData = ((TcpArgs)e).Data;
@@ -72,6 +71,12 @@ namespace Client.Ver2
                     ShowMessage($"Receive: {receivedData.Length} byte");
                     Input = Serialize.ByteArrayToTerminal(receivedData, out deserializetime);
                     ShowMessage($"Deserialization Time: {deserializetime} ms");
+                    //Set value for InOutTerminal
+                    this.InOutTerminalTable.Invoke(new Action(() =>
+                    {
+                        this.InOutTerminalTable.SetValue2View(Input);
+                    }));
+                    //Set Value for cb InputImage
                     string _lastsellectedvalue = null;
                     int _lastsellectedindex = -1;
                     this.cbxInputImageList.Invoke(new Action(() => 
